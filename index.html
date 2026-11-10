@@ -17,7 +17,7 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 /* ===== HEADER + BURGER ===== */
 .top{position:sticky;top:0;z-index:30;background:#f8f4eaee;backdrop-filter:blur(10px);border-bottom:1.5px solid var(--ink)}
 .bar{display:flex;align-items:center;gap:16px;height:70px}
-.logo{font:700 1.7rem var(--serif);letter-spacing:-.03em;text-decoration:none}.logo mark{padding:0 8px;border-radius:6px}
+.logo{position:relative;display:inline-block;font:800 1.88rem/1.1 var(--serif);letter-spacing:.01em;-webkit-text-stroke:.25px var(--ink);text-decoration:none;padding:7px 28px;transform:rotate(-1.5deg);transition:transform .2s}.logo:hover{transform:rotate(0)}.logo mark{display:inline-block;margin:0 -29px;padding:0 29px 2px;border-radius:6px}.logo:after{content:"";position:absolute;inset:-1px -5px;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 70' preserveAspectRatio='none'%3E%3Cpath d='M187 18 C197 28 193 46 171 56 C148 66 112 67 90 66 C55 66 20 62 9 44 C1 28 19 12 50 8 C80 4 125 3 158 6 C178 8 191 15 197 29' fill='none' stroke='%23101a33' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}.btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
 .date{margin-left:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .burger{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);display:grid;place-content:center;gap:5px;transition:.2s}
 .burger:hover{background:var(--lime);transform:rotate(-6deg)}
@@ -742,7 +742,7 @@ function home(){
     <h1 class="big">Learn something <mark>fascinating</mark> every single day.</h1>
     <p class="sub">One day. One fascinating fact. One new thing to learn — researched, explained and sourced, waiting behind a single click.</p>
   </div><div><div class="fcard" id="fc"></div>
-    <div class="pill-row" style="margin-top:18px"><button class="btn ghost" id="rnd">Random discovery</button><button class="btn ghost" data-nav="/archive">Browse the archive →</button></div>
+    <div class="pill-row" style="margin-top:18px"><button class="btn ghost" id="rnd">Random discovery<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></button><button class="btn ghost" data-nav="/archive">Browse the archive<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button></div>
     <p class="status" id="stat"></p>
     ${mode==="encore"?'<p class="status" style="margin-top:8px">Every dated fact has now been published, so the library is replaying in order, one a day. New dated facts can be added any time.</p>':fallback?'<p class="status" style="margin-top:8px">No fact is scheduled for today, so this is an archive pick.</p>':""}
   </div></div>
