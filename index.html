@@ -40,6 +40,17 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 .bd.lock i{filter:grayscale(1);opacity:.4}
 .bd b{display:block;font-size:.95rem}.bd small{display:block;color:var(--mute);font-size:.78rem;line-height:1.35;margin-top:3px}
 .bd .bar2{height:6px;border-radius:9px;background:var(--paper2);margin-top:10px;overflow:hidden}.bd .bar2 span{display:block;height:100%;background:var(--ink)}
+.confetti{pointer-events:none}
+.sb{position:fixed;z-index:90;background:var(--lime);border:2px solid var(--ink);border-radius:16px;box-shadow:3px 3px 0 var(--ink);padding:8px 18px;font-weight:800;white-space:nowrap;pointer-events:none;transform-origin:var(--tx) 100%;animation:sbin .35s cubic-bezier(.2,.9,.3,1.4)}
+.sb:after{content:"";position:absolute;left:var(--tx);bottom:-9px;width:14px;height:14px;background:var(--lime);border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+.sb.dn{transform-origin:var(--tx) 0}.sb.dn:after{bottom:auto;top:-9px;transform:translateX(-50%) rotate(225deg)}
+.sb.out{opacity:0;transition:opacity .25s}
+@keyframes sbin{from{opacity:0;transform:scale(.5)}}.bt{text-decoration:none;color:var(--ink);-webkit-tap-highlight-color:transparent;position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;display:flex;align-items:center;gap:12px;width:min(92vw,380px);background:var(--card);border:2px solid var(--ink);border-radius:18px;box-shadow:5px 5px 0 var(--ink);padding:10px 18px 10px 10px;cursor:pointer;animation:btin .5s cubic-bezier(.2,.9,.3,1.25)}
+.bt.out{opacity:0;transform:translateX(-50%) translateY(14px);transition:.25s}
+.bt i{width:58px;height:58px;flex:none}.bt i svg{width:100%;height:100%;display:block}
+.bt small{display:inline-block;font-weight:800;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;background:var(--lime);padding:1px 8px;border-radius:6px;border:1.5px solid var(--ink)}
+.bt b{display:block;font:800 1.15rem/1.2 var(--serif);margin-top:5px}.bt span{display:block;color:var(--mute);font-size:.82rem;line-height:1.3}
+@keyframes btin{from{opacity:0;transform:translateX(-50%) translateY(30px) scale(.9)}}
 .btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
 .date{margin-left:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .burger{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);display:grid;place-content:center;gap:5px;transition:.2s}
@@ -821,7 +832,7 @@ function article(d){
     <h2 class="rv">Sources &amp; further reading</h2><ul class="src rv">${f.src.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a></li>`).join("")}</ul>
   </article>
   <section><h2 style="margin-bottom:20px">Related discoveries</h2><div class="grid">${rel.map(card).join("")}</div></section>`;
-  $("#bm").onclick=e=>{const s=toggleMark(d);e.target.textContent=s?"★ Saved":"☆ Save";toast(s?"Saved to bookmarks":"Bookmark removed")};
+  $("#bm").onclick=e=>{const s=toggleMark(d);e.target.textContent=s?"★ Saved":"☆ Save";bubble(s?"Saved…":"Removed…",e.currentTarget)};
   $("#sh").onclick=async()=>{const u=location.href.split("#")[0]+"#/article/"+d;
     try{if(navigator.share){await navigator.share({title:f.t,text:f.lead,url:u})}else{await navigator.clipboard.writeText(u);toast("Link copied")}}
     catch(e){if(e.name!=="AbortError"){try{await navigator.clipboard.writeText(u);toast("Link copied")}catch(_){toast("Copy this link: "+u)}}}};
@@ -917,8 +928,23 @@ function icon(b){const t=b.tier,dk=t===7,ink="#101a33",edge=dk?"#c6f432":ink,gol
   if(t>=3&&!dk)f+=`<path d="M17 21A17 17 0 0 1 29 11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".65"/>`;
   if(t>=6)f+=[[5,8],[59,11],[57,56]].map(([x,y])=>`<path d="M${x} ${y-4}l1.2 2.8 2.8 1.2-2.8 1.2L${x} ${y+4}l-1.2-2.8-2.8-1.2 2.8-1.2z" fill="${dk?gold:ink}"/>`).join("");
   return `<svg viewBox="0 0 64 64" aria-hidden="true">${f}<g transform="translate(20 20)" fill="none" stroke="${st}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${GL[b.ic]}</g></svg>`}
+function bubble(msg,a){
+  document.querySelectorAll(".sb").forEach(e=>e.remove());
+  const o=document.createElement("div");o.className="sb";o.textContent=msg;document.body.appendChild(o);
+  const r=a.getBoundingClientRect(),w=o.offsetWidth,h=o.offsetHeight,cx=r.left+r.width/2,left=Math.min(Math.max(cx-w/2,10),innerWidth-w-10);
+  let top=r.top-h-14;if(top<8){top=r.bottom+14;o.classList.add("dn")}
+  o.style.left=left+"px";o.style.top=top+"px";o.style.setProperty("--tx",(cx-left)+"px");
+  setTimeout(()=>{o.classList.add("out");setTimeout(()=>o.remove(),250)},1800)}
+function badgeToast(b,more){
+  document.querySelectorAll(".bt").forEach(e=>e.remove());
+  const o=document.createElement("a");o.className="bt";o.href="#/badges";o.setAttribute("data-nav","/badges");
+  o.innerHTML=`<i>${icon(b)}</i><div><small>Badge unlocked${more?" · +"+more+" more":""}</small><b>${b.name}</b><span>${b.desc}</span></div>`;
+  const rm=()=>{o.classList.add("out");setTimeout(()=>o.remove(),250)};
+  o.addEventListener("click",rm);
+  document.body.appendChild(o);setTimeout(rm,4500);
+  if(b.tier>=4&&typeof confetti==="function")confetti()}
 function checkBadges(){const st=badgeStats(),got=BADGES.filter(b=>b.val(st)>=b.goal),seen=store.get("cur_seen",[]),nw=got.filter(b=>!seen.includes(b.id));
-  if(nw.length){store.set("cur_seen",got.map(b=>b.id));toast("Badge unlocked: "+nw[0].name+(nw.length>1?" +"+(nw.length-1)+" more":""))}}
+  if(nw.length){store.set("cur_seen",got.map(b=>b.id));nw.sort((a,b)=>b.tier-a.tier);badgeToast(nw[0],nw.length-1)}}
 function badges(){const st=badgeStats(),got=BADGES.filter(b=>b.val(st)>=b.goal).length;
   const card=b=>{const v=b.val(st),ok=v>=b.goal;return `<div class="bd${ok?"":" lock"}"><i>${icon(b)}</i><b>${b.name}</b><small>${b.desc}</small>${ok?"":`<div class="bar2"><span style="width:${Math.round(v/b.goal*100)}%"></span></div><small>${v} / ${b.goal}</small>`}</div>`};
   const sec=g=>`<h2>${g}</h2><div class="bd-grid">${BADGES.filter(b=>b.g===g).map(card).join("")}</div>`;
