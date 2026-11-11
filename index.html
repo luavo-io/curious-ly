@@ -33,6 +33,13 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 .sk-c.on{background:var(--lime);border:2px solid var(--ink);animation:skpop .45s cubic-bezier(.2,.9,.3,1.4) both;animation-delay:calc(.15s + var(--i)*.07s)}
 .sk-c svg{width:20px;height:20px}
 @keyframes skfade{from{opacity:0}}@keyframes skup{from{transform:translateY(20px) scale(.94);opacity:0}}@keyframes skpop{from{transform:scale(0)}}
+.bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin:14px 0 34px}
+.bd{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:18px 12px 14px;text-align:center;box-shadow:3px 3px 0 var(--ink)}
+.bd.lock{border-style:dashed;box-shadow:none;background:transparent}
+.bd i{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 10px;border-radius:50%;border:2px solid var(--ink);background:var(--lime);font:800 1.5rem/1 var(--serif);font-style:normal}
+.bd.lock i{background:none;border:2px dashed var(--line);color:#a39d8b;filter:grayscale(1);opacity:.7}
+.bd b{display:block;font-size:.95rem}.bd small{display:block;color:var(--mute);font-size:.78rem;line-height:1.35;margin-top:3px}
+.bd .bar2{height:6px;border-radius:9px;background:var(--paper2);margin-top:10px;overflow:hidden}.bd .bar2 span{display:block;height:100%;background:var(--ink)}
 .btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
 .date{margin-left:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .burger{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);display:grid;place-content:center;gap:5px;transition:.2s}
@@ -129,7 +136,8 @@ footer{border-top:1.5px solid var(--ink);margin-top:60px;padding:30px 0;color:va
   <a class="dl" href="#/" data-nav="/" data-r="home"><small>01</small>Home</a>
   <a class="dl" href="#/archive" data-nav="/archive" data-r="archive"><small>02</small>Archive</a>
   <a class="dl" href="#/categories" data-nav="/categories" data-r="categories"><small>03</small>Categories</a>
-  <a class="dl" href="#/about" data-nav="/about" data-r="about"><small>04</small>About</a>
+  <a class="dl" href="#/badges" data-nav="/badges" data-r="badges"><small>04</small>Badges</a>
+  <a class="dl" href="#/about" data-nav="/about" data-r="about"><small>05</small>About</a>
   <div class="dfoot"><span id="streak2"></span><br><button class="btn sm" id="rnd2">Surprise me</button><br><span class="mini" aria-hidden="true"><b>C</b></span></div>
 </aside>
 <main class="wrap" id="app"></main>
@@ -737,7 +745,7 @@ function updateStreak(){
   const t=todayKey();let days=store.get("cur_days",null);
   if(!days){days=[];const o=store.get("cur_streak",null);if(o&&o.last){for(let i=0;i<o.n;i++)days.push(dayBack(o.last,i))}}
   const first=!days.includes(t);
-  if(first){days.push(t);days=days.slice(-120);store.set("cur_days",days)}
+  if(first){days.push(t);days=days.slice(-1000);store.set("cur_days",days)}
   const n=streakCount(days,t),txt="Reading streak: "+n+(n===1?" day":" days");
   $("#streak").textContent=txt;$("#streak2").textContent=txt;return{n,first}}
 function showStreak(){
@@ -754,7 +762,7 @@ function showStreak(){
 
 /* Bookmarks */
 const marks=()=>store.get("cur_marks",[]);
-function toggleMark(d){let m=marks();m=m.includes(d)?m.filter(x=>x!==d):[...m,d];store.set("cur_marks",m);return m.includes(d)}
+function toggleMark(d){let m=marks();m=m.includes(d)?m.filter(x=>x!==d):[...m,d];store.set("cur_marks",m);setTimeout(checkBadges,2400);return m.includes(d)}
 
 /* ===== COMPONENTS ===== */
 const card=f=>`<div class="acard rv" data-go="${f.d}">${isToday(f.d)?'<span class="today-tag">TODAY</span>':""}${art(f)}<div class="fbody"><span class="kick">${fmt(f.d)} · ${mins(f)} min</span><h3>${f.t}</h3></div></div>`;
@@ -784,7 +792,7 @@ function home(){
     $("#rv").onclick=reveal;stat.innerHTML="Today’s fact: <b>not yet revealed</b>"};
   const revealed=a=>{fc.className="fcard"+(a?" reveal":"");fc.innerHTML=`${art(f,"hero")}<div class="fbody"><span class="kick">${f.c}</span><h2>${f.t}</h2><p style="color:var(--mute);margin-bottom:20px">${f.lead}</p><button class="btn" id="rd">READ THE FULL STORY</button><div style="margin-top:22px"><button class="btn ghost sm" id="hide">Hide again</button></div></div>`;
     $("#rd").onclick=()=>go("/article/"+f.d);$("#hide").onclick=mystery;stat.innerHTML="Today’s fact: <b>revealed on this device</b> — you can still re-read it"};
-  function reveal(){const r=store.get("cur_rev",{});r[todayKey()]=1;store.set("cur_rev",r);confetti();fc.style.transition=".3s";fc.style.transform="scale(.96)";
+  function reveal(){const r=store.get("cur_rev",{});r[todayKey()]=1;store.set("cur_rev",r);setTimeout(checkBadges,1800);confetti();fc.style.transition=".3s";fc.style.transform="scale(.96)";
     setTimeout(()=>{fc.style.transform="";revealed(true)},280)}
   rev?revealed(false):mystery();
   $("#rnd").onclick=randomFact;observe();
@@ -867,13 +875,33 @@ function disclaimer(){
   <h2>Corrections</h2><p>We are happy to correct mistakes when we are told about them.</p></article>`;
 }
 
+/* ===== BADGES ===== */
+function bestStreak(days){const u=[...new Set(days)].sort();let b=0,n=0,p=null;u.forEach(d=>{n=p&&dayBack(d,1)===p?n+1:1;p=d;if(n>b)b=n});return b}
+function badgeStats(){const days=store.get("cur_days",[]),r=store.get("cur_rev",{}),cats=new Set(Object.keys(r).map(k=>(FACTS.find(x=>x.d===k)||{}).c).filter(Boolean));
+  return{best:bestStreak(days),days:days.length,read:Object.keys(r).length,saved:marks().length,cats:cats.size}}
+const SK=[[1,"First step"],[3,"Warming up"],[7,"One week"],[14,"Two weeks"],[30,"One month"],[60,"Two months"],[100,"Centurion"],[365,"One year"]];
+const BADGES=[
+ ...SK.map(([n,t])=>({id:"s"+n,g:"Streak",ic:n,name:t,desc:n===1?"Open Curiously for the first time":n+" days in a row",goal:n,val:s=>s.best})),
+ ...[[1,"Curious mind"],[10,"Fact finder"],[25,"Knowledge builder"],[50,"Fact fanatic"],[100,"Walking encyclopedia"]].map(([n,t])=>({id:"r"+n,g:"Learning",ic:"📖",name:t,desc:"Reveal "+n+(n===1?" fact":" facts"),goal:n,val:s=>s.read})),
+ {id:"b1",g:"Collecting",ic:"★",name:"Bookmarker",desc:"Save your first fact",goal:1,val:s=>s.saved},
+ {id:"b10",g:"Collecting",ic:"🔖",name:"Collector",desc:"Save 10 facts",goal:10,val:s=>s.saved},
+ {id:"c3",g:"Collecting",ic:"🧭",name:"Explorer",desc:"Reveal facts in 3 categories",goal:3,val:s=>s.cats},
+ {id:"c7",g:"Collecting",ic:"🌍",name:"Polymath",desc:"Reveal facts in all "+Object.keys(CATS).length+" categories",goal:Object.keys(CATS).length,val:s=>s.cats},
+ {id:"d30",g:"Collecting",ic:"📅",name:"Regular",desc:"Visit on 30 different days",goal:30,val:s=>s.days}];
+function checkBadges(){const st=badgeStats(),got=BADGES.filter(b=>b.val(st)>=b.goal),seen=store.get("cur_seen",[]),nw=got.filter(b=>!seen.includes(b.id));
+  if(nw.length){store.set("cur_seen",got.map(b=>b.id));toast("Badge unlocked: "+nw[0].name+(nw.length>1?" +"+(nw.length-1)+" more":""))}}
+function badges(){const st=badgeStats(),got=BADGES.filter(b=>b.val(st)>=b.goal).length;
+  const card=b=>{const v=b.val(st),ok=v>=b.goal;return `<div class="bd${ok?"":" lock"}"><i>${b.ic}</i><b>${b.name}</b><small>${b.desc}</small>${ok?"":`<div class="bar2"><span style="width:${Math.round(v/b.goal*100)}%"></span></div><small>${v} / ${b.goal}</small>`}</div>`};
+  const sec=g=>`<h2>${g}</h2><div class="bd-grid">${BADGES.filter(b=>b.g===g).map(card).join("")}</div>`;
+  $("#app").innerHTML=`<article class="article"><p class="kick">Badges</p><h1>Your <mark>achievements</mark></h1><p class="lead">${got} of ${BADGES.length} earned. Best streak: ${st.best} ${st.best===1?"day":"days"}.</p>${sec("Streak")}${sec("Learning")}${sec("Collecting")}</article>`}
+
 /* ===== ROUTER (renders directly; the URL hash is updated when the browser allows it) ===== */
 let cur=(location.hash.slice(1))||"/",backTo="/";
 function route(){
   const[p,a]=cur.split("/").filter(Boolean);
   $("#today-date").textContent=fmt(todayKey(),{weekday:"long",day:"numeric",month:"long"});
   $$(".drawer .dl").forEach(l=>l.classList.toggle("on",l.dataset.r===(p||"home")||(p==="article"&&l.dataset.r==="archive")));
-  (p==="archive"?archive:p==="categories"?categories:p==="about"?about:p==="disclaimer"?disclaimer:p==="article"?()=>article(a):home)();
+  (p==="archive"?archive:p==="categories"?categories:p==="about"?about:p==="badges"?badges:p==="disclaimer"?disclaimer:p==="article"?()=>article(a):home)();
   window.scrollTo(0,0);
 }
 function go(path){if(path.startsWith("/article")&&!cur.startsWith("/article"))backTo=cur==="/archive"?"/archive":"/";cur=path;try{if(location.hash.slice(1)!==path)location.hash=path}catch(e){}closeMenu();route()}
@@ -891,7 +919,7 @@ $("#rnd2").onclick=()=>{closeMenu();randomFact()};
 addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
 
 ["#streak","#streak2"].forEach(q=>$(q).onclick=showStreak);
-const _st=updateStreak();route();if(_st.first)setTimeout(showStreak,700);
+const _st=updateStreak();route();if(_st.first)setTimeout(showStreak,700);setTimeout(checkBadges,_st.first?2200:800);
 /* Refresh automatically at local midnight */
 (function midnight(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,2);
   setTimeout(()=>{updateStreak();route();midnight()},t-n)})();
