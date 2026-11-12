@@ -951,7 +951,8 @@ function badges(){const st=badgeStats(),got=BADGES.filter(b=>b.val(st)>=b.goal).
   $("#app").innerHTML=`<article class="article"><p class="kick">Badges</p><h1>Your <mark>achievements</mark></h1><p class="lead">${got} of ${BADGES.length} earned. Best streak: ${st.best} ${st.best===1?"day":"days"}.</p>${sec("Streak")}${sec("Learning")}${sec("Collecting")}</article>`}
 
 /* ===== ROUTER (renders directly; the URL hash is updated when the browser allows it) ===== */
-let cur=(location.hash.slice(1))||"/",backTo="/";
+let cur=location.hash.startsWith("#/article/")?location.hash.slice(1):"/",backTo="/";
+try{if(cur==="/"&&location.hash)history.replaceState(null,"",location.pathname+location.search)}catch(e){}
 function route(){
   const[p,a]=cur.split("/").filter(Boolean);
   $("#today-date").textContent=fmt(todayKey(),{weekday:"long",day:"numeric",month:"long"});
