@@ -54,7 +54,7 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 .bt small{display:inline-block;font-weight:800;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;background:var(--lime);padding:1px 8px;border-radius:6px;border:1.5px solid var(--ink)}
 .bt b{display:block;font:800 1.15rem/1.2 var(--serif);margin-top:5px}.bt span{display:block;color:var(--mute);font-size:.82rem;line-height:1.3}
 @keyframes btin{from{opacity:0;transform:translateX(-50%) translateY(30px) scale(.9)}}
-.sbrow{display:flex;align-items:center;gap:0;margin-top:10px}.sbrow .mini{margin-top:0;margin-right:26px}.ig{background:none;border:0;padding:0;display:flex;align-items:center;color:var(--ink);cursor:pointer;margin-right:10px}.ig svg{width:26px;height:26px;display:block}.soon{font-size:.95rem;line-height:1;color:var(--mute);display:block;position:relative;top:1px}.bd .dt{color:var(--ink);font-weight:700;margin-top:6px}.flab{display:block;font-weight:800;margin:18px 0 6px}.fld{width:100%;padding:12px 14px;border:1.5px solid var(--ink);border-radius:12px;background:var(--card);font:inherit;color:var(--ink)}.fld:focus{outline:3px solid var(--lime)}textarea.fld{resize:vertical}.btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
+.sbrow{display:flex;align-items:center;gap:0;margin-top:10px}.sbrow .mini{margin-top:0;margin-right:26px}.ig{background:none;border:0;padding:0;display:flex;align-items:center;color:var(--ink);cursor:pointer;margin-right:10px}.ig svg{width:26px;height:26px;display:block}.soon{font-size:.95rem;line-height:1;color:var(--mute);display:block;position:relative;top:1px}.bd .dt{color:var(--ink);font-weight:700;margin-top:6px}.btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
 .date{margin-left:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .burger{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);display:grid;place-content:center;gap:5px;transition:.2s}
 .burger:hover{background:var(--lime);transform:rotate(-6deg)}
@@ -962,30 +962,10 @@ function archive(){
 }
 
 function contact(){
-  const ENDPOINT="https://formspree.io/f/xrpzpgkn",opts=["Suggest an improvement","Report something wrong","Suggest a fact or topic","Report a bug","Something else"];
   $("#app").innerHTML=`<article class="article"><p class="kick">Contact</p><h1>Get in <mark>touch</mark></h1>
-  <p class="lead">Spotted a mistake, have an idea, or want to suggest a fact? Tell me below.</p>
-  <label class="flab" for="cx-type">What is it about?</label>
-  <select id="cx-type" class="fld">${opts.map(o=>`<option>${o}</option>`).join("")}</select>
-  <label class="flab" for="cx-fact">Which fact or page? (optional)</label>
-  <input id="cx-fact" class="fld" maxlength="120" placeholder="e.g. the Venus flytrap fact">
-  <label class="flab" for="cx-msg">Your message</label>
-  <textarea id="cx-msg" class="fld" rows="6" maxlength="2000" placeholder="Write your message here…"></textarea>
-  <label class="flab" for="cx-mail">Your email (optional, only if you want a reply)</label>
-  <input id="cx-mail" class="fld" type="email" maxlength="120" placeholder="you@example.com">
-  <p id="cx-note" style="color:var(--mute);font-size:.95rem;margin:14px 0 16px;min-height:1.4em"></p>
-  <button class="btn" id="cx-send" type="button">Send message</button></article>`;
-  const note=t=>$("#cx-note").textContent=t,btn=$("#cx-send");
-  btn.onclick=async()=>{const m=$("#cx-msg").value.trim();if(!m){note("Please write a message first.");return}
-    const t=$("#cx-type").value,f=$("#cx-fact").value.trim(),e=$("#cx-mail").value.trim();
-    btn.disabled=true;btn.textContent="Sending…";note("");
-    try{const r=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
-      body:JSON.stringify(Object.assign({_subject:"[Curiously] "+t,Type:t,"Fact or page":f||"-",Message:m},e?{email:e}:{}))});
-      const j=await r.json().catch(()=>({}));
-      if(!r.ok||j.errors)throw 0;
-      $("#cx-msg").value="";$("#cx-fact").value="";$("#cx-mail").value="";note("Thank you! Your message has been sent.");toast("Message sent")}
-    catch(_){note("Sorry, that didn’t send. Please check the details and try again in a moment.")}
-    btn.disabled=false;btn.textContent="Send message"}}
+  <p class="lead">Have a suggestion, found a bug, spotted something wrong, or want to say something else? Send me an email.</p>
+  <p style="margin:22px 0"><button class="btn" id="cx-mail" type="button">Email me</button></p></article>`;
+  $("#cx-mail").onclick=()=>{location.href="mailto:"+["lucarobertavola","outlook.com"].join("@")+"?subject="+encodeURIComponent("Curiously")}}
 
 function about(){
   $("#app").innerHTML=`<article class="article"><p class="kick">About</p><h1>Why <mark>Curiously</mark> exists</h1>
