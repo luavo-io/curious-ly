@@ -54,9 +54,10 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 .bt small{display:inline-block;font-weight:800;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;background:var(--lime);padding:1px 8px;border-radius:6px;border:1.5px solid var(--ink)}
 .bt b{display:block;font:800 1.15rem/1.2 var(--serif);margin-top:5px}.bt span{display:block;color:var(--mute);font-size:.82rem;line-height:1.3}
 @keyframes btin{from{opacity:0;transform:translateX(-50%) translateY(30px) scale(.9)}}
-.sbrow{display:flex;align-items:center;gap:0;margin-top:10px}.sbrow .mini{margin-top:0;margin-right:26px}.ig{background:none;border:0;padding:0;display:flex;align-items:center;color:var(--ink);cursor:pointer;margin-right:10px}.ig svg{width:26px;height:26px;display:block}.soon{font-size:.95rem;line-height:1;color:var(--mute);display:block;position:relative;top:1px}.bd .dt{color:var(--ink);font-weight:700;margin-top:6px}.sup{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:92;width:min(92vw,380px);background:var(--card);border:2px solid var(--ink);border-radius:18px;box-shadow:5px 5px 0 var(--ink);padding:16px 18px;animation:btin .5s cubic-bezier(.2,.9,.3,1.25)}
-.sup.out{opacity:0;transform:translateX(-50%) translateY(14px);transition:.25s}
-.sup b{display:block;font:800 1.1rem/1.2 var(--serif);margin-bottom:4px}.sup p{color:var(--mute);font-size:.9rem;line-height:1.45;margin:0 0 12px}.sup .row{display:flex;gap:10px;flex-wrap:wrap}
+.sbrow{display:flex;align-items:center;gap:0;margin-top:10px}.sbrow .mini{margin-top:0;margin-right:26px}.ig{background:none;border:0;padding:0;display:flex;align-items:center;color:var(--ink);cursor:pointer;margin-right:10px}.ig svg{width:26px;height:26px;display:block}.soon{font-size:.95rem;line-height:1;color:var(--mute);display:block;position:relative;top:1px}.bd .dt{color:var(--ink);font-weight:700;margin-top:6px}.sup-ic{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:var(--lime);border:2px solid var(--ink);animation:skpop .45s cubic-bezier(.2,.9,.3,1.4) both .15s}.sup-ic svg{width:30px;height:30px}
+.sup-h{font:800 1.7rem/1.15 var(--serif);margin:2px 0 8px}.sup-btns{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:20px}
+.sup-no{background:none;border:0;color:var(--mute);font-weight:700;padding:6px 10px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
 .btn svg{width:1.1em;height:1.1em;vertical-align:-.2em;margin-left:9px}
 .date{margin-left:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .burger{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);display:grid;place-content:center;gap:5px;transition:.2s}
@@ -596,7 +597,7 @@ const MORE4={
 FACTS.forEach(f=>{if(MORE4[f.d])f.more=[...(f.more||[]),MORE4[f.d]]});
 
 /* Categories and their colours */
-const CATS={Space:"#3b5bdb",Animals:"#f08c00",Science:"#0ca678",History:"#c2255c",Nature:"#5c940d",Oceans:"#1098ad",Geography:"#862e9c",Body:"#e03131",Tech:"#495057",Culture:"#7048e8"};
+const CATS={Space:"#1c3faa",Animals:"#f08c00",Science:"#0ca678",History:"#8a5a2b",Nature:"#5c940d",Oceans:"#1098ad",Geography:"#862e9c",Body:"#e03131",Tech:"#7048e8",Culture:"#c2255c"};
 const W="rgba(255,255,255,";
 const PAT={
  Space:`radial-gradient(${W}.35) 2px,transparent 2.5px) 0 0/22px 22px`,
@@ -1006,7 +1007,7 @@ function contact(){
 function about(){
   $("#app").innerHTML=`<article class="article"><p class="kick">About</p><h1>Why <mark>Curiously</mark> exists</h1>
   <p class="lead">One day. One fascinating fact. One new thing to learn.</p>
-  <h2>Why I made it</h2><p>I’m a little obsessed with fun facts, the kind that make you stop mid-scroll and say “wait, really?” Curiously is my daily dose of that: one surprising thing, explained simply and backed by sources, so you can fall down the rabbit hole whenever you like. It’s a tiny habit that makes every day a bit more interesting, and I hope it does the same for you. Curiously is free to read and has no ads, and if you enjoy it, you can <a href="https://buymeacoffee.com/luavo.io" target="_blank" rel="noopener" style="font-weight:700">buy me a coffee</a> to help keep it going.</p>
+  <h2>Why I made it</h2><p>I’m a little obsessed with fun facts, the kind that make you stop mid-scroll and say “wait, really?” Curiously is my daily dose of that: one surprising thing, explained simply and backed by sources, so you can fall down the rabbit hole whenever you like. It’s a tiny habit that makes every day a bit more interesting, and I hope it does the same for you. Curiously is free to read and has no ads, and if you enjoy it, you can support me by <a href="https://buymeacoffee.com/luavo.io" target="_blank" rel="noopener" style="font-weight:700">buying me a coffee</a>.</p>
   <h2>How it works</h2><p>Every calendar date has its own fact, chosen from your device’s local date — so everyone sees the same fact on the same day, and it changes at midnight. Facts never repeat. If you ever reach the latest fact, the site stays on it until new ones are added.</p>
   <h2>Accuracy</h2><p>Each article links to its sources and flags where findings are uncertain or disputed. Please check the sources yourself, and read our <a href="#/disclaimer" data-nav="/disclaimer" style="font-weight:700">full disclaimer</a>.</p>
   <h2>Privacy</h2><p>No accounts, no tracking. Bookmarks, your streak and “revealed” status live only in this browser’s localStorage.</p> </article>`;
@@ -1072,18 +1073,18 @@ function bubble(msg,a){
   o.style.left=left+"px";o.style.top=top+"px";o.style.setProperty("--tx",(cx-left)+"px");
   setTimeout(()=>{o.classList.add("out");setTimeout(()=>o.remove(),250)},1800)}
 function maybeSupport(n=0){
-  if($(".sup"))return;
+  if($("#supov"))return;
   if($(".bt")||$("#skov")){if(n<4)setTimeout(()=>maybeSupport(n+1),4000);return}   /* wait if a badge card or streak popup is showing */
   const st=store.get("cur_sup",{}),t=todayKey();
   if(st.next&&t<st.next)return;                                 /* shows on the first reveal, then every 3 days */
   const later=n=>store.set("cur_sup",{next:dayBack(t,-n)});
   later(3);
-  const o=document.createElement("div");o.className="sup";o.setAttribute("role","dialog");o.setAttribute("aria-label","Support Curiously");
-  o.innerHTML=`<b>Enjoying Curiously?</b><p>It’s free and ad-free. If it has made your day a bit more interesting, a coffee helps me keep it going.</p><div class="row"><a class="btn sm" href="${SUPPORT}" target="_blank" rel="noopener" style="text-decoration:none">Support Curiously</a><button class="btn ghost sm" type="button">Not now</button></div>`;
-  const rm=()=>{o.classList.add("out");setTimeout(()=>o.remove(),250)};
-  o.querySelector("a").addEventListener("click",()=>{later(60);rm()});
-  o.querySelector("button").onclick=()=>{later(3);rm()};
-  document.body.appendChild(o);setTimeout(()=>{if(o.isConnected)rm()},14000)}
+  const CUP='<svg viewBox="0 0 24 24" fill="none" stroke="#101a33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+  const o=document.createElement("div");o.className="sk-ov";o.id="supov";
+  o.innerHTML=`<div class="sk-card" role="dialog" aria-label="Support Curiously"><i class="sup-ic">${CUP}</i><div class="sup-h">Enjoying Curiously?</div><div class="sk-m">It’s free and ad-free. If it has made your day a bit more interesting, you can support me by buying me a coffee.</div><div class="sup-btns"><a class="btn sm" id="supgo" href="${SUPPORT}" target="_blank" rel="noopener" style="text-decoration:none">Support Curiously</a><button class="sup-no" id="supno" type="button">Not now</button></div></div>`;
+  const close=()=>{o.style.transition="opacity .2s";o.style.opacity=0;setTimeout(()=>o.remove(),200);document.removeEventListener("keydown",esc)},esc=e=>{if(e.key==="Escape")close()};
+  o.addEventListener("click",e=>{if(e.target===o||e.target.id==="supno")close();else if(e.target.closest('a[href*="buymeacoffee.com"]')){later(60);setTimeout(close,300)}});
+  document.addEventListener("keydown",esc);document.body.appendChild(o)}
 function badgeToast(b,more){
   document.querySelectorAll(".bt").forEach(e=>e.remove());
   const o=document.createElement("a");o.className="bt";o.href="#/achievements";o.setAttribute("data-nav","/achievements");
