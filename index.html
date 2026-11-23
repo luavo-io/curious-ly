@@ -986,7 +986,7 @@ function home(){
     <p class="status" id="stat"></p>
     ${mode==="end"?'<p class="status" style="margin-top:8px">You’re all caught up. New facts are on the way.</p>':fallback?'<p class="status" style="margin-top:8px">No fact is scheduled for today, so this is an archive pick.</p>':""}
   </div></div>
-  <section style="padding-top:8px"><h2 style="margin-bottom:20px">Recently revealed</h2><div class="grid">${published().filter(x=>x.d!==f.d).slice(0,4).map(card).join("")}</div><div style="margin-top:28px;text-align:center"><button class="btn" data-nav="/archive">SEE THE FULL ARCHIVE →</button></div></section>`;
+  <section style="padding-top:16px"><h2 style="margin-bottom:20px">Recently revealed</h2><div class="grid">${published().filter(x=>x.d!==f.d).slice(0,4).map(card).join("")}</div><div style="margin-top:28px;text-align:center"><button class="btn" data-nav="/archive">SEE THE FULL ARCHIVE →</button></div></section>`;
   const fc=$("#fc"),stat=$("#stat");
   const mystery=()=>{fc.className="fcard";fc.innerHTML=`${art(f,"hero",true)}<div class="fbody"><span class="kick">${f.c} · ${mins(f)} min read</span><h2>Today’s discovery is waiting.</h2><p style="color:var(--mute);margin-bottom:20px">Click to uncover it.</p><button class="btn" id="rv">REVEAL TODAY’S FACT</button></div>`;
     $("#rv").onclick=reveal;stat.innerHTML="Today’s fact: <b>not yet revealed</b>"};
