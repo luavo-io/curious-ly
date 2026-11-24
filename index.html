@@ -1159,7 +1159,8 @@ function badges(){checkBadges();const st=badgeStats(),E=store.get("cur_earned",{
   $("#app").innerHTML=`<article class="article"><p class="kick">Achievements</p><h1>Your <mark>achievements</mark></h1><p class="lead">${got} of ${BADGES.length} earned. Best streak: ${st.best} ${st.best===1?"day":"days"}.</p>${sec("Streak")}${sec("Learning")}${sec("Collecting")}</article>`}
 
 /* ===== ROUTER (renders directly; the URL hash is updated when the browser allows it) ===== */
-let archY=null,lastRoute="",cur=location.hash.startsWith("#/article/")?location.hash.slice(1):"/",backTo="/";
+const STANDALONE=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+let archY=null,lastRoute="",cur=(!STANDALONE&&location.hash.startsWith("#/article/"))?location.hash.slice(1):"/",backTo="/";
 try{if(cur==="/"&&location.hash)history.replaceState(null,"",location.pathname+location.search)}catch(e){}
 function route(){
   const[p,a]=cur.split("/").filter(Boolean),came=lastRoute;lastRoute=cur;
