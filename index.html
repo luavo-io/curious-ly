@@ -1190,7 +1190,10 @@ const _st=updateStreak();route();if(_st.first)setTimeout(showStreak,700);setTime
 /* When the app is reopened on a new day (or the tab wakes up), go back to the home page so today's fact is showing */
 let lastDay=todayKey();
 function newDay(){const t=todayKey();if(t===lastDay)return;lastDay=t;const st=updateStreak();go("/");if(st.first)setTimeout(showStreak,700);setTimeout(checkBadges,2200)}
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)newDay()});addEventListener("pageshow",newDay);addEventListener("focus",newDay);
+let hiddenAt=0;
+document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();return}
+  if(STANDALONE&&hiddenAt&&Date.now()-hiddenAt>20000&&cur!=="/")go("/");
+  newDay()});addEventListener("pageshow",newDay);addEventListener("focus",newDay);
 (function midnight(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,2);
   setTimeout(()=>{if(cur==="/"){newDay()}else{updateStreak()}midnight()},t-n)})();
 </script>
