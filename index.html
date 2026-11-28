@@ -29,8 +29,12 @@ h1,h2,h3{font-family:var(--serif);line-height:1.08;letter-spacing:-.02em;font-we
 .sk-ov{position:fixed;inset:0;z-index:100;background:#101a3366;display:grid;place-items:center;padding:20px;animation:skfade .25s}
 .sk-card{background:var(--card);border:2px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:26px 22px 22px;text-align:center;max-width:360px;width:100%;animation:skup .35s cubic-bezier(.2,.9,.3,1.2)}
 .sk-n{font:800 3.4rem/1 var(--serif)}.sk-t{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;color:var(--mute);margin:6px 0 4px}.sk-m{color:var(--mute);font-size:.95rem}
-.sk-row{display:flex;justify-content:space-between;gap:6px;margin:18px 0 22px}
-.sk-day{display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;font-size:.8rem;color:var(--mute)}
+.sk-row{position:relative;width:100%;margin:10px 0 14px;padding:8px 0;overflow:hidden}
+.sk-row:before,.sk-row:after{content:"";position:absolute;top:0;bottom:0;width:15%;z-index:2;pointer-events:none}
+.sk-row:before{left:0;background:linear-gradient(90deg,var(--card),#fffdf700)}
+.sk-row:after{right:0;background:linear-gradient(270deg,var(--card),#fffdf700)}
+.sk-track{display:flex;transition:transform .7s cubic-bezier(.45,.05,.25,1)}
+.sk-day{flex:none;width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;font-size:.8rem;color:var(--mute)}
 .sk-c{width:34px;height:34px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center}
 .sk-c.now:not(.on){border-style:solid;border-color:var(--ink)}
 .sk-c.on{background:var(--lime);border:2px solid var(--ink);animation:skpop .45s cubic-bezier(.2,.9,.3,1.4) both;animation-delay:calc(.15s + var(--i)*.07s)}
@@ -626,7 +630,7 @@ const mins=()=>2; /* every fact is shown as a 2 minute read */
 const art=(f,cls="",q=false)=>{const d=parse(f.d);
   return `<div class="art ${cls} ${q?"q":""}" style="background:${PAT[f.c]},${CATS[f.c]}"><b class="cl">${f.c}</b>${q?'<span class="qm">?</span>':""}<span class="num">${pad(d.getDate())}<small>${d.toLocaleDateString("en-GB",{month:"short"}).toUpperCase()}</small></span></div>`};
 const SUPPORT="https://buymeacoffee.com/luavo.io";
-const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const _mem={};const store={get:(k,d)=>{try{const v=localStorage.getItem(k);if(v!==null)return JSON.parse(v)??d}catch(e){}return k in _mem?_mem[k]:d},set:(k,v)=>{_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const toast=m=>{const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)};
 
 /* ===== AUTO-SCHEDULED LIBRARY =====
@@ -950,15 +954,23 @@ function updateStreak(){
   $("#streak").textContent=txt;$("#streak2").textContent=txt;return{n,first}}
 function showStreak(){
   if($("#skov"))return;
-  const t=todayKey(),days=store.get("cur_days",[]),n=streakCount(days,t),dow=(parse(t).getDay()+6)%7,L=["M","T","W","T","F","S","S"];
+  let days0=store.get("cur_days",[]);if(!days0.includes(todayKey()))updateStreak();
+  const t=todayKey(),days=store.get("cur_days",[]),n=streakCount(days,t),play=store.get("cur_anim","")!==t,dow=(parse(t).getDay()+6)%7,L=["M","T","W","T","F","S","S"];if(play)store.set("cur_anim",t);
   const TICK='<svg viewBox="0 0 24 24" fill="none" stroke="#101a33" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   let cells="";
-  for(let i=0;i<7;i++){const k=dayBack(t,3-i),done=days.includes(k);
-    cells+=`<div class="sk-day"><span>${L[(parse(k).getDay()+6)%7]}</span><i class="sk-c${done?" on":""}${i===3?" now":""}" style="--i:${i}">${done?TICK:""}</i></div>`}
+  for(let i=0;i<8;i++){const k=dayBack(t,4-i),done=days.includes(k),td=i===4;
+    cells+=`<div class="sk-day"><span>${L[(parse(k).getDay()+6)%7]}</span><i class="sk-c${!play&&done?" on":""}" ${td?'id="sktoday"':""} data-done="${done?1:0}" style="--i:0${!play?";animation:none":""}">${!play&&done?TICK:""}</i></div>`}
   const o=document.createElement("div");o.className="sk-ov";o.id="skov";
-  o.innerHTML=`<div class="sk-card" role="dialog" aria-label="Reading streak"><div class="sk-n">${n}</div><div class="sk-t">day streak</div><div class="sk-m">${n===1?"Nice start. Come back tomorrow to build it.":"You’re on a roll. Keep it going."}</div><div class="sk-row">${cells}</div><button class="btn sm" id="skgo">Keep going</button></div>`;
+  o.innerHTML=`<div class="sk-card" role="dialog" aria-label="Reading streak"><div class="sk-n">${n}</div><div class="sk-t">day streak</div><div class="sk-m">${n===1?"Nice start. Come back tomorrow to build it.":"You’re on a roll. Keep it going."}</div><div class="sk-row"><div class="sk-track" id="sktrack">${cells}</div></div><button class="btn sm" id="skgo">Keep going</button></div>`;
   const close=()=>{o.style.transition="opacity .2s";o.style.opacity=0;setTimeout(()=>o.remove(),200);document.removeEventListener("keydown",esc)},esc=e=>{if(e.key==="Escape")close()};
-  o.addEventListener("click",e=>{if(e.target===o||e.target.id==="skgo")close()});document.addEventListener("keydown",esc);document.body.appendChild(o)}
+  o.addEventListener("click",e=>{if(e.target===o||e.target.id==="skgo")close()});document.addEventListener("keydown",esc);document.body.appendChild(o);
+  const row=o.querySelector(".sk-row"),tr=o.querySelector("#sktrack"),W=44,pos=c=>Math.round(row.clientWidth/2-(c*W+W/2));
+  const fill=el=>{el.classList.add("on");el.innerHTML=TICK};
+  if(!play){tr.style.transition="none";tr.style.transform="translateX("+pos(4)+"px)";return}
+  tr.style.transition="none";tr.style.transform="translateX("+pos(3)+"px)";
+  o.querySelectorAll(".sk-c").forEach((el,i)=>{if(el.dataset.done==="1"&&el.id!=="sktoday")setTimeout(()=>fill(el),250+i*80)});
+  setTimeout(()=>{tr.style.transition="";tr.style.transform="translateX("+pos(4)+"px)";
+    setTimeout(()=>{const td=o.querySelector("#sktoday");if(td&&days.includes(t))fill(td)},800)},750)}
 
 /* Bookmarks */
 const marks=()=>store.get("cur_marks",[]);
